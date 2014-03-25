@@ -14,7 +14,7 @@ public:
     Atom(
         const Vector3D& position,
         const Vector3D& velocity = Vector3D(0.0, 0.0, 0.0),
-        const Vector3D& force = Vector3D(0.0, 0.0, 0.0)
+        const Vector3D& force    = Vector3D(0.0, 0.0, 0.0)
     );
 
     inline const Vector3D& getPosition() const;

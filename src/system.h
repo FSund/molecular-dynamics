@@ -20,9 +20,12 @@ public:
     System();
 //    System(std::vector<Atom *> atoms, Vector3D systemSize);
 
-    const std::vector<Atom*> getAtoms() const;
-    const Vector3D getSystemSize() const;
-    const Vector3D getHalfSystemSize() const;
+    const std::vector<Atom*> &getMutableAtoms() const;
+    const std::vector<const Atom*> &getAtoms() const;
+    Atom *getMutableAtom(const uint i) const;
+    const Atom *getAtom(const uint i) const;
+    const Vector3D &getSystemSize() const;
+    const Vector3D &getHalfSystemSize() const;
 
     void doOneTimeStep(const double dt);
     void writeToXYZ(const std::string& filename);
@@ -30,6 +33,7 @@ public:
 
 private:
     std::vector<Atom *> m_atoms;
+    std::vector<const Atom *> m_constAtoms;
     std::vector<Atom> m_atom_objects;
     Integrator *m_integrator;
 

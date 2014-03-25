@@ -17,6 +17,7 @@ System::System():
     for (Atom& atom : m_atom_objects)
     {
         m_atoms.push_back(&atom);
+        m_constAtoms.push_back(&atom); // casts to const?
     }
     generator.boltzmannDistributeVelocities(temperature, m_atoms);
 }
@@ -29,17 +30,34 @@ System::System():
 //{
 //}
 
-const std::vector<Atom *> System::getAtoms() const
+const std::vector<Atom *> &System::getMutableAtoms() const
 {
     return m_atoms;
 }
 
-const Vector3D System::getSystemSize() const
+const std::vector<const Atom *> &System::getAtoms() const
+{
+    return m_constAtoms;
+}
+
+Atom *System::getMutableAtom(const uint i) const
+{
+    return m_atoms[i];
+}
+
+const Atom *System::getAtom(const uint i) const
+{
+//    return const_cast<const Atom*>(m_atoms[i]);
+//    return m_atoms[i]; // automatic cast to const?
+    return m_constAtoms[i]; // better ?
+}
+
+const Vector3D &System::getSystemSize() const
 {
     return m_systemSize;
 }
 
-const Vector3D System::getHalfSystemSize() const
+const Vector3D &System::getHalfSystemSize() const
 {
     return m_halfSystemSize;
 }

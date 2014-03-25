@@ -8,7 +8,7 @@ Integrator::Integrator(System *system):
 
 void Integrator::integrate(const double dt)
 {
-    for (Atom *atom : system->getAtoms()) {
+    for (Atom *atom : system->getMutableAtoms()) {
         atom->m_velocity += atom->getForce()*dt/2.0;
         atom->m_position += atom->getVelocity()*dt;
 
@@ -21,14 +21,14 @@ void Integrator::integrate(const double dt)
 
     calculateForces();
 
-    for (Atom *atom : system->getAtoms()) {
+    for (Atom *atom : system->getMutableAtoms()) {
         atom->m_velocity += atom->getForce()*dt/2.0;
     }
 }
 
 void Integrator::calculateForces()
 {
-    for (Atom *atom : system->getAtoms())
+    for (Atom *atom : system->getMutableAtoms())
     {
         atom->setForce(Vector3D(0.0, 0.0, 0.0));
     }
@@ -37,8 +37,8 @@ void Integrator::calculateForces()
         for (uint neighborAtomIndex = mainAtomIndex+1; neighborAtomIndex < system->nAtoms(); neighborAtomIndex++) // this is bad, should use iterators or C++11 range-based for
         {
             force->calculateForces(
-                        system->getAtoms()[mainAtomIndex],
-                        system->getAtoms()[neighborAtomIndex],
+                        system->getMutableAtom(mainAtomIndex),
+                        system->getMutableAtom(neighborAtomIndex),
                         system->getSystemSize(),
                         system->getHalfSystemSize());
         }
