@@ -9,7 +9,7 @@ class Force
 {
 public:
 //    Force();
-    void calculateAndApplyForces(Atom *mainAtom, Atom *neighborAtom, const Vector3D& systemSize, const Vector3D& halfSystemSize);
+    void calculateForces(Atom *mainAtom, Atom *neighborAtom, const Vector3D& systemSize, const Vector3D& halfSystemSize);
 
 private:
     Vector3D force;

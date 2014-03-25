@@ -3,10 +3,12 @@
 
 #include <vector3d.h>
 
+class Integrator;
+
 class Atom
 {
 public:
-    friend class System;
+    friend class Integrator;
 
     Atom();
     Atom(

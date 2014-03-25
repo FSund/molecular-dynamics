@@ -13,7 +13,8 @@ SOURCES += \
     system.cpp \
     vector3d.cpp \
     integrator.cpp \
-    force.cpp
+    force.cpp \
+    systemgenerator.cpp
 
 HEADERS += \
     atom.h \
@@ -21,4 +22,5 @@ HEADERS += \
     vector3d.h \
     box.h \
     integrator.h \
-    force.h
+    force.h \
+    systemgenerator.h

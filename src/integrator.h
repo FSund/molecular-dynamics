@@ -15,6 +15,8 @@ class Integrator
 public:
     Integrator() = delete; // delete default constructor
     Integrator(System *system);
+
+    void integrate(const double dt);
     void calculateForces();
 
 private:

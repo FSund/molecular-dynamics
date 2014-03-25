@@ -9,6 +9,7 @@
 
 #include <atom.h>
 #include <integrator.h>
+#include <systemgenerator.h>
 
 // forward declarations
 class Integrator;
@@ -19,19 +20,18 @@ public:
     System();
 //    System(std::vector<Atom *> atoms, Vector3D systemSize);
 
-    const std::vector<Atom*> atoms() const;
-    const Vector3D systemSize() const;
-    const Vector3D halfSystemSize() const;
+    const std::vector<Atom*> getAtoms() const;
+    const Vector3D getSystemSize() const;
+    const Vector3D getHalfSystemSize() const;
 
     void doOneTimeStep(const double dt);
     void writeToXYZ(const std::string& filename);
     uint nAtoms() const;
 
 private:
-    std::vector<Atom*> m_atoms;
+    std::vector<Atom *> m_atoms;
+    std::vector<Atom> m_atom_objects;
     Integrator *m_integrator;
-
-    Vector3D randVelocity();
 
 //    std::vector<Box> m_boxes;
     uint m_nTimeSteps;

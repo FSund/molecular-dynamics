@@ -45,27 +45,34 @@ SUITE(Forces)
         ForceData() :
             force(new Force),
             atom1(new Atom(Vector3D(0.0, 0.0, 0.0))),
-            atom2(new Atom(Vector3D(2.0, 0.0, 0.0))),
-            systemSize(Vector3D(10.0, 1.0, 1.0)),
+            atom2(new Atom(Vector3D(2.0, 3.0, 4.0))),
+            systemSize(Vector3D(10.0, 10.0, 10.0)),
             halfSystemSize(systemSize/2.0)
         {
-            force->calculateAndApplyForces(atom1, atom2, systemSize, halfSystemSize);
+            drVec = atom1->getPosition() - atom2->getPosition();
+            distance = drVec.length();
+            force->calculateForces(atom1, atom2, systemSize, halfSystemSize);
         }
 
         Force *force;
         Atom *atom1;
         Atom *atom2;
+        double distance;
+        Vector3D drVec;
         Vector3D systemSize;
         Vector3D halfSystemSize;
     };
 
-    TEST_FIXTURE(ForceData, ForceCalculation)
+    TEST_FIXTURE(ForceData, ForceCalculationComponentwise)
     {
-        CHECK(
-               atom1->getForce()[0] == -24.0*(2.0 - pow(2.0, 6.0))/pow(2.0, 13.0)*2.0/2.0
-            && atom1->getForce()[1] == 0.0
-            && atom1->getForce()[2] == 0.0
+        Vector3D actualForce(
+            24.0*(2.0 - pow(distance, 6.0))/pow(distance, 13.0)*drVec[0]/distance,
+            24.0*(2.0 - pow(distance, 6.0))/pow(distance, 13.0)*drVec[1]/distance,
+            24.0*(2.0 - pow(distance, 6.0))/pow(distance, 13.0)*drVec[2]/distance
         );
+        CHECK_CLOSE(atom1->getForce()[0], actualForce[0], 1e-18);
+        CHECK_CLOSE(atom1->getForce()[1], actualForce[1], 1e-18);
+        CHECK_CLOSE(atom1->getForce()[2], actualForce[2], 1e-18);
     }
 
     TEST_FIXTURE(ForceData, NewtonsThirdLaw)
