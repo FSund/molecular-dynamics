@@ -11,22 +11,28 @@ public:
     Force() = delete; // Delete default constructur
     Force(const Vector3D systemSize);
 
-    void calculateForces(
+    void calculateForceWithoutDisplacementVector(
+            Atom *atom1,
+            Atom *atom2);
+
+    void calculateForceWithDisplacementVector(
             Atom *atom1,
             Atom *atom2,
             const Vector3D& displacementVector);
 
-    void calculateForcesUsingMinimumImageConvention(
+    inline void calculateForceUsingMinimumImageConvention(
             Atom *atom1,
             Atom *atom2);
 
-    void calculateForcesUsingMinimumImageConvention(
+    void calculateForceUsingMinimumImageConvention(
             Atom *atom1,
             Atom *atom2,
             const Vector3D& systemSize,
             const Vector3D& halfSystemSize);
 
 private:
+    inline const Vector3D& calculateForce(const Vector3D& drVec);
+
     Vector3D force;
     Vector3D drVec;
     double dr2;
@@ -36,5 +42,21 @@ private:
     Vector3D m_systemSize;
     Vector3D m_halfSystemSize;
 };
+
+inline void Force::calculateForceUsingMinimumImageConvention(Atom *atom1, Atom *atom2)
+{
+    calculateForceUsingMinimumImageConvention(atom1, atom2, m_systemSize, m_halfSystemSize);
+}
+
+inline const Vector3D& Force::calculateForce(const Vector3D& drVec)
+{
+    dr2 = drVec[0]*drVec[0] + drVec[1]*drVec[1] + drVec[2]*drVec[2];
+    dr6 = dr2*dr2*dr2;
+
+    LJforce = 24.0*(2.0 - dr6)/(dr6*dr6*dr2);
+    force = drVec*LJforce;
+
+    return force;
+}
 
 #endif // FORCE_H

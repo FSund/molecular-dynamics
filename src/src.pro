@@ -21,7 +21,6 @@ HEADERS += \
     atom.h \
     system.h \
     vector3d.h \
-    box.h \
     integrator.h \
     force.h \
     systemgenerator.h \

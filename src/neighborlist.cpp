@@ -1,7 +1,6 @@
 #include <neighborlist.h>
 
 Vector3D NeighborList::m_boxSize;
-const Vector3D NeighborList::zeroVec = Vector3D(0.0, 0.0, 0.0);
 
 NeighborList::NeighborList(
         const Vector3D &origin,
@@ -21,13 +20,16 @@ void NeighborList::findNeighbors(
         const std::vector<int> &nLists,
         const Vector3D &systemSize)
 {
-    // Note that these loops will also include itself
     for (int di = -1; di <= 1; di++)
     {
         for (int dj = -1; dj <= 1; dj++)
         {
             for (int dk = -1; dk <= 1; dk++)
             {
+                if (di == 0 && dj == 0 && dk == 0) // Don't want to include self in list of neighbors
+                {
+                    continue;
+                }
                 int i = m_index[0] + di;
                 int j = m_index[1] + dj;
                 int k = m_index[2] + dk;
@@ -118,60 +120,38 @@ void NeighborList::findMyAtomsInList(std::list<Atom*> &atoms)
 
 void NeighborList::calculateForces(Force *force)
 {
-    for (auto atom = m_atoms.begin(); atom != m_atoms.end(); ++atom) // Use iterators so we can calculate force from self efficiently (start from iterator atom+1)
+    // Calculate forces from self
+    for (auto atom = m_atoms.begin(); atom != m_atoms.end(); ++atom)
     {
+        this->calcuateForceFromSelf(atom, force);
+
+        // Calculate forces from neighbors
         for (uint i = 0; i < m_neighbors.size(); i++)
         {
-            if (m_neighbors[i] == this)
-            {
-                m_neighbors[i]->calcuateForcesFromSelfIterator(atom, force);
-            }
-            else
-            {
-                m_neighbors[i]->calcuateForcesFromBox(*atom, force, m_displacementVectors[i]);
-            }
+//            if (m_neighbors[i] != this) // Not necessary, since self isn't included in list of neighbors
+            m_neighbors[i]->calcuateForceFromBox(*atom, force, m_displacementVectors[i]); // Better not to dereference here?
         }
     }
 }
 
-inline void NeighborList::calcuateForcesFromSelfIterator(const std::list<Atom *>::iterator &atom1, Force* force)
-{
-    auto tmp = atom1; // Make copy since we can't increment atom1
-    for (auto atom2 = ++tmp; atom2 != m_atoms.end(); ++atom2)
-    {
-        force->calculateForces(*atom1, *atom2, zeroVec);
-    }
-}
+//void NeighborList::calculateForces(Force *force)
+//{
+//    // Calculate forces from self
+//    for (auto atom1 = m_atoms.begin(); atom1 != m_atoms.end(); ++atom1)
+//    {
+//        for (auto atom2 = std::next(atom1); atom2 != m_atoms.end(); ++atom2) // std::next() gets iterator to next without incrementing
+//        {
+//            force->calculateForceWithoutDisplacementVector(*atom1, *atom2);
+//        }
+//    }
 
-inline void NeighborList::calcuateForcesFromSelf(Atom* atom1, Force* force)
-{
-    for (Atom *atom2 : m_atoms)
-    {
-        if (atom1 != atom2)
-        {
-            force->calculateForces(atom1, atom2, Vector3D(0.0, 0.0, 0.0));
-        }
-        else
-        {
-            // skip calculation, since atom1 == atom2
-        }
-    }
-}
-
-inline void NeighborList::calcuateForcesFromBox(Atom* atom1, Force* force, const Vector3D &displacementVector)
-{
-    for (Atom *atom2 : m_atoms)
-    {
-        force->calculateForces(atom1, atom2, displacementVector);
-    }
-}
-
-const std::list<Atom*>&NeighborList::getAtoms() const
-{
-    return m_atoms;
-}
-
-int NeighborList::getLinearIndex() const
-{
-    return m_linearIndex;
-}
+//    // Calculate forces from neighbors
+//    for (auto atom = m_atoms.begin(); atom != m_atoms.end(); ++atom)
+//    {
+//        for (uint i = 0; i < m_neighbors.size(); i++)
+//        {
+////            if (m_neighbors[i] != this) // Not necessary, since self isn't included in list of neighbors
+//            m_neighbors[i]->calcuateForceFromBox(*atom, force, m_displacementVectors[i]); // Better not to dereference here?
+//        }
+//    }
+//}

@@ -18,11 +18,11 @@ int main()
 
     double dt = 0.01;
     ostringstream filename;
-    for (uint i = 0; i < 300; i++)
+    for (uint i = 0; i < 10; i++)
     {
         filename << "/home/fsund/Data/molecular-dynamics/statefiles/state" << std::setw(3) << std::setfill('0') << i << ".xyz";
 //        sys.writeToXYZ(filename.str());
-        sys.writeToXYZWithBoxID(filename.str());
+//        sys.writeToXYZWithBoxID(filename.str());
         filename.str(""); // clear stringstream
 
         sys.doOneTimeStep(dt);

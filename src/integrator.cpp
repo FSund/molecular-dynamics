@@ -95,11 +95,6 @@ void Integrator::integrate(const double dt)
     }
 }
 
-const std::vector<NeighborList> Integrator::getNeighborLists() const
-{
-    return m_neighborLists;
-}
-
 void Integrator::calculateForces()
 {
     for (Atom *atom : m_system->getMutableAtoms())
@@ -110,7 +105,7 @@ void Integrator::calculateForces()
     {
         for (uint neighborAtomIndex = mainAtomIndex+1; neighborAtomIndex < m_system->nAtoms(); neighborAtomIndex++) // this is bad, should use iterators or C++11 range-based for
         {
-            m_force->calculateForcesUsingMinimumImageConvention(
+            m_force->calculateForceUsingMinimumImageConvention(
                         m_system->getMutableAtom(mainAtomIndex),
                         m_system->getMutableAtom(neighborAtomIndex),
                         m_system->getSystemSize(),

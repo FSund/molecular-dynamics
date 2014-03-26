@@ -28,38 +28,6 @@ System::System(const uint nUnitCells, const double unitCellLength, const double 
 //{
 //}
 
-const std::vector<Atom *> &System::getMutableAtoms() const
-{
-    return m_atoms;
-}
-
-const std::vector<const Atom *> &System::getAtoms() const
-{
-    return m_constAtoms;
-}
-
-Atom *System::getMutableAtom(const uint i) const
-{
-    return m_atoms[i];
-}
-
-const Atom *System::getAtom(const uint i) const
-{
-//    return const_cast<const Atom*>(m_atoms[i]);
-//    return m_atoms[i]; // automatic cast to const?
-    return m_constAtoms[i]; // better ?
-}
-
-const Vector3D &System::getSystemSize() const
-{
-    return m_systemSize;
-}
-
-const Vector3D &System::getHalfSystemSize() const
-{
-    return m_halfSystemSize;
-}
-
 void System::doOneTimeStep(const double dt)
 {
     m_integrator->integrate(dt);
@@ -127,9 +95,4 @@ void System::writeToXYZWithBoxID(const std::string& filename)
             }
         }
     }
-}
-
-uint System::nAtoms() const
-{
-    return m_atoms.size();
 }

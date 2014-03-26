@@ -51,7 +51,7 @@ SUITE(Forces)
         {
             drVec = atom1->getPosition() - atom2->getPosition();
             distance = drVec.length();
-            force->calculateForcesUsingMinimumImageConvention(atom1, atom2, systemSize, halfSystemSize);
+            force->calculateForceUsingMinimumImageConvention(atom1, atom2, systemSize, halfSystemSize);
         }
 
         Vector3D systemSize;

@@ -23,7 +23,7 @@ public:
     Integrator(System *system, const double forceCutoff);
 
     void integrate(const double dt);
-    const std::vector<NeighborList> getNeighborLists() const;
+    inline const std::vector<NeighborList> getNeighborLists() const;
 
 private:
     void calculateForces();
@@ -35,5 +35,10 @@ private:
 
     bool m_useBoxes = true;
 };
+
+inline const std::vector<NeighborList> Integrator::getNeighborLists() const
+{
+    return m_neighborLists;
+}
 
 #endif // INTEGRATOR_H

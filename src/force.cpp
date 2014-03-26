@@ -6,26 +6,27 @@ Force::Force(const Vector3D systemSize):
 {
 }
 
-void Force::calculateForces(Atom *atom1, Atom *atom2, const Vector3D &displacementVector)
+void Force::calculateForceWithoutDisplacementVector(Atom *atom1, Atom *atom2)
 {
-    drVec = atom1->getPosition() - atom2->getPosition() + displacementVector;
+    drVec = atom1->getPosition() - atom2->getPosition();
 
-    dr2 = drVec[0]*drVec[0] + drVec[1]*drVec[1] + drVec[2]*drVec[2];
-    dr6 = dr2*dr2*dr2;
-
-    LJforce = 24.0*(2.0 - dr6)/(dr6*dr6*dr2);
-    force = drVec*LJforce;
+    force = this->calculateForce(drVec);
 
     atom1->addForce(force);
     atom2->addForce(-force);
 }
 
-void Force::calculateForcesUsingMinimumImageConvention(Atom *atom1, Atom *atom2)
+void Force::calculateForceWithDisplacementVector(Atom *atom1, Atom *atom2, const Vector3D &displacementVector)
 {
-    calculateForcesUsingMinimumImageConvention(atom1, atom2, m_systemSize, m_halfSystemSize);
+    drVec = atom1->getPosition() - atom2->getPosition() + displacementVector;
+
+    force = this->calculateForce(drVec);
+
+    atom1->addForce(force);
+    atom2->addForce(-force);
 }
 
-void Force::calculateForcesUsingMinimumImageConvention(Atom *atom1, Atom *atom2, const Vector3D &systemSize, const Vector3D &halfSystemSize)
+void Force::calculateForceUsingMinimumImageConvention(Atom *atom1, Atom *atom2, const Vector3D &systemSize, const Vector3D &halfSystemSize)
 {
     drVec = atom1->getPosition() - atom2->getPosition();
 
@@ -35,11 +36,7 @@ void Force::calculateForcesUsingMinimumImageConvention(Atom *atom1, Atom *atom2,
         else if (drVec[i] < -halfSystemSize[i]) drVec[i] += systemSize[i];
     }
 
-    dr2 = drVec[0]*drVec[0] + drVec[1]*drVec[1] + drVec[2]*drVec[2];
-    dr6 = dr2*dr2*dr2;
-
-    LJforce = 24.0*(2.0 - dr6)/(dr6*dr6*dr2);
-    force = drVec*LJforce;
+    force = this->calculateForce(drVec);
 
     atom1->addForce(force);
     atom2->addForce(-force);
