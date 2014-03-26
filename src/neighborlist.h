@@ -22,9 +22,9 @@ class NeighborList
 
 public:
     NeighborList() = delete; // Delete default constructor
-    NeighborList(const Vector3D displacement, const std::vector<Atom *> &atoms, const std::vector<int> index, const int linearIndex);
+    NeighborList(const Vector3D& origin, const std::vector<Atom *> &atoms, const std::vector<int>& index, const int linearIndex);
 
-    void findNeighbors(std::vector<NeighborList>& lists, const std::vector<int> &nLists);
+    void findNeighbors(std::vector<NeighborList>& lists, const std::vector<int> &nLists, const Vector3D& systemSize);
     void calculateForces(Force* force);
     void purgeAtoms(std::list<Atom *> &atomsOutsideBox);
     void findMyAtomsInList(std::list<Atom *> &atoms);
@@ -35,15 +35,15 @@ public:
 private:
     std::vector<NeighborList *> m_neighbors; // Would like to have this const, but that's hard to do, since we need to have created all list objects before making a list over all neighbors for each list.
     std::list<Atom *> m_atoms;
-    Vector3D m_displacement;
+    Vector3D m_origin;
     std::vector<Vector3D> m_displacementVectors;
     std::vector<int> m_index;
     int m_linearIndex;
 
     static Vector3D m_boxSize;
 
-    void calcuateForcesFromBox(Atom *atom1, Force *force);
-        void calcuateForcesFromSelf(Atom *atom, Force *force);
+    void calcuateForcesFromBox(Atom *atom1, Force *force, const Vector3D& displacementVector);
+    void calcuateForcesFromSelf(Atom *atom, Force *force);
 };
 
 #endif // NEIGHBORLIST_H

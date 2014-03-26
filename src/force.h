@@ -8,10 +8,23 @@
 class Force
 {
 public:
-    Force() = delete;
+    Force() = delete; // Delete default constructur
     Force(const Vector3D systemSize);
-    void calculateForces(Atom *mainAtom, Atom *neighborAtom);
-    void calculateForces(Atom *mainAtom, Atom *neighborAtom, const Vector3D& systemSize, const Vector3D& halfSystemSize);
+
+    void calculateForces(
+            Atom *atom1,
+            Atom *atom2,
+            const Vector3D& displacementVector);
+
+    void calculateForcesUsingMinimumImageConvention(
+            Atom *atom1,
+            Atom *atom2);
+
+    void calculateForcesUsingMinimumImageConvention(
+            Atom *atom1,
+            Atom *atom2,
+            const Vector3D& systemSize,
+            const Vector3D& halfSystemSize);
 
 private:
     Vector3D force;

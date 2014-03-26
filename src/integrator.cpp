@@ -39,11 +39,11 @@ Integrator::Integrator(System *system, const double forceCutoff):
         {
             for (int k = 0; k < nLists[2]; k++)
             {
-                Vector3D displacement = Vector3D(i, j, k)*boxSize;
+                Vector3D origin = Vector3D(i, j, k)*boxSize;
 
                 int linearIndex = convert3dIndicesToLinearIndex(i, j, k, nLists);
                 m_neighborLists.push_back(
-                    NeighborList(displacement, neighborListAtoms[linearIndex], std::vector<int>{i, j, k}, linearIndex)
+                    NeighborList(origin, neighborListAtoms[linearIndex], std::vector<int>{i, j, k}, linearIndex)
                 );
             }
         }
@@ -51,7 +51,7 @@ Integrator::Integrator(System *system, const double forceCutoff):
 
     for (NeighborList &list : m_neighborLists)
     {
-        list.findNeighbors(m_neighborLists, nLists);
+        list.findNeighbors(m_neighborLists, nLists, m_system->getSystemSize());
     }
 }
 
@@ -110,7 +110,7 @@ void Integrator::calculateForces()
     {
         for (uint neighborAtomIndex = mainAtomIndex+1; neighborAtomIndex < m_system->nAtoms(); neighborAtomIndex++) // this is bad, should use iterators or C++11 range-based for
         {
-            m_force->calculateForces(
+            m_force->calculateForcesUsingMinimumImageConvention(
                         m_system->getMutableAtom(mainAtomIndex),
                         m_system->getMutableAtom(neighborAtomIndex),
                         m_system->getSystemSize(),

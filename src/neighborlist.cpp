@@ -3,13 +3,13 @@
 Vector3D NeighborList::m_boxSize;
 
 NeighborList::NeighborList(
-        const Vector3D displacement,
+        const Vector3D &origin,
         const std::vector<Atom *> &atoms,
-        const std::vector<int> index,
+        const std::vector<int> &index,
         const int linearIndex):
 //    system(system),
     m_atoms(std::list<Atom *>(atoms.begin(), atoms.end())), // "Converting" std::vector to std::list
-    m_displacement(displacement),
+    m_origin(origin),
     m_index(index),
     m_linearIndex(linearIndex)
 {
@@ -17,7 +17,8 @@ NeighborList::NeighborList(
 
 void NeighborList::findNeighbors(
         std::vector<NeighborList> &lists, // This can't be const because m_neighbors.push_back(&lists[linearIndex]) doesn't like it
-        const std::vector<int> &nLists)
+        const std::vector<int> &nLists,
+        const Vector3D &systemSize)
 {
     // Note that these loops will also include itself
     for (int di = -1; di <= 1; di++)
@@ -40,30 +41,27 @@ void NeighborList::findNeighbors(
 
                 int linearIndex = convert3dIndicesToLinearIndex(i, j, k, nLists);
 
-                if (std::find(m_neighbors.begin(), m_neighbors.end(), &lists[linearIndex]) == m_neighbors.end()) // Skip boxes already in list. Only does something for systems with less than 27 boxes.
+                NeighborList *neighborList = &lists[linearIndex];
+                if (std::find(m_neighbors.begin(), m_neighbors.end(), neighborList) == m_neighbors.end()) // Skip boxes already in list. Only does something for systems with less than 27 boxes.
                 {
-                    m_neighbors.push_back(&lists[linearIndex]);
+                    m_neighbors.push_back(neighborList);
                 }
 
-                // find m_displacementVectors
-            }
-        }
-    }
-}
-
-void NeighborList::calculateForces(Force *force)
-{
-    for (Atom *atom : m_atoms)
-    {
-        for (NeighborList *list : m_neighbors)
-        {
-            if (list == this)
-            {
-                list->calcuateForcesFromSelf(atom, force);
-            }
-            else
-            {
-                list->calcuateForcesFromBox(atom, force);
+                // Calculate displacement vector for this neighbor
+                Vector3D displacementVector(0.0, 0.0, 0.0);
+                Vector3D drVec = m_origin - neighborList->m_origin;
+                for (uint dim = 0; dim < 3; dim++)
+                {
+                    if (drVec[dim] >= systemSize[dim]/2.0)
+                    {
+                        displacementVector[dim] -= systemSize[dim];
+                    }
+                    else if (drVec[dim] < -systemSize[dim]/2.0)
+                    {
+                        displacementVector[dim] += systemSize[dim];
+                    }
+                }
+                m_displacementVectors.push_back(displacementVector);
             }
         }
     }
@@ -75,12 +73,12 @@ void NeighborList::purgeAtoms(std::list<Atom*>& atomsOutsideBox)
     while (atom != m_atoms.end())
     {
         if (
-                ((*atom)->getPosition()[0] < m_displacement[0]) ||
-                ((*atom)->getPosition()[0] >= (m_displacement[0]+m_boxSize[0])) ||
-                ((*atom)->getPosition()[1] < m_displacement[1]) ||
-                ((*atom)->getPosition()[1] >= (m_displacement[1]+m_boxSize[1])) ||
-                ((*atom)->getPosition()[2] < m_displacement[2]) ||
-                ((*atom)->getPosition()[2] >= (m_displacement[2]+m_boxSize[2]))
+                ((*atom)->getPosition()[0] < m_origin[0]) ||
+                ((*atom)->getPosition()[0] >= (m_origin[0]+m_boxSize[0])) ||
+                ((*atom)->getPosition()[1] < m_origin[1]) ||
+                ((*atom)->getPosition()[1] >= (m_origin[1]+m_boxSize[1])) ||
+                ((*atom)->getPosition()[2] < m_origin[2]) ||
+                ((*atom)->getPosition()[2] >= (m_origin[2]+m_boxSize[2]))
             )  // Atom is outside my box
         {
             atomsOutsideBox.push_back(*atom);
@@ -99,12 +97,12 @@ void NeighborList::findMyAtomsInList(std::list<Atom*> &atoms)
     while (atom != atoms.end())
     {
         if (
-                ((*atom)->getPosition()[0] >= m_displacement[0]) &&
-                ((*atom)->getPosition()[0] < (m_displacement[0]+m_boxSize[0])) &&
-                ((*atom)->getPosition()[1] >= m_displacement[1]) &&
-                ((*atom)->getPosition()[1] < (m_displacement[1]+m_boxSize[1])) &&
-                ((*atom)->getPosition()[2] >= m_displacement[2]) &&
-                ((*atom)->getPosition()[2] < (m_displacement[2]+m_boxSize[2]))
+                ((*atom)->getPosition()[0] >= m_origin[0]) &&
+                ((*atom)->getPosition()[0] < (m_origin[0]+m_boxSize[0])) &&
+                ((*atom)->getPosition()[1] >= m_origin[1]) &&
+                ((*atom)->getPosition()[1] < (m_origin[1]+m_boxSize[1])) &&
+                ((*atom)->getPosition()[2] >= m_origin[2]) &&
+                ((*atom)->getPosition()[2] < (m_origin[2]+m_boxSize[2]))
             ) // Atom is inside my box
         {
             m_atoms.push_back(*atom); // Add to my list of atoms
@@ -117,21 +115,22 @@ void NeighborList::findMyAtomsInList(std::list<Atom*> &atoms)
     }
 }
 
-const std::list<Atom*>&NeighborList::getAtoms() const
+void NeighborList::calculateForces(Force *force)
 {
-    return m_atoms;
-}
-
-int NeighborList::getLinearIndex() const
-{
-    return m_linearIndex;
-}
-
-void NeighborList::calcuateForcesFromBox(Atom* atom1, Force* force)
-{
-    for (Atom *atom2 : m_atoms)
+    for (Atom *atom : m_atoms)
     {
-        force->calculateForces(atom1, atom2);
+//        for (NeighborList *list : m_neighbors)
+        for (uint i = 0; i < m_neighbors.size(); i++)
+        {
+            if (m_neighbors[i] == this)
+            {
+                m_neighbors[i]->calcuateForcesFromSelf(atom, force);
+            }
+            else
+            {
+                m_neighbors[i]->calcuateForcesFromBox(atom, force, m_displacementVectors[i]);
+            }
+        }
     }
 }
 
@@ -141,11 +140,29 @@ void NeighborList::calcuateForcesFromSelf(Atom* atom1, Force* force)
     {
         if (atom1 != atom2)
         {
-            force->calculateForces(atom1, atom2);
+            force->calculateForces(atom1, atom2, Vector3D(0.0, 0.0, 0.0));
         }
         else
         {
             // skip calculation, since atom1 == atom2
         }
     }
+}
+
+void NeighborList::calcuateForcesFromBox(Atom* atom1, Force* force, const Vector3D &displacementVector)
+{
+    for (Atom *atom2 : m_atoms)
+    {
+        force->calculateForces(atom1, atom2, displacementVector);
+    }
+}
+
+const std::list<Atom*>&NeighborList::getAtoms() const
+{
+    return m_atoms;
+}
+
+int NeighborList::getLinearIndex() const
+{
+    return m_linearIndex;
 }

@@ -4,20 +4,32 @@ Force::Force(const Vector3D systemSize):
     m_systemSize(systemSize),
     m_halfSystemSize(systemSize/2.0)
 {
-
 }
 
-void Force::calculateForces(Atom *mainAtom, Atom *neighborAtom)
+void Force::calculateForces(Atom *atom1, Atom *atom2, const Vector3D &displacementVector)
 {
-    calculateForces(mainAtom, neighborAtom, m_systemSize, m_halfSystemSize);
+    drVec = atom1->getPosition() - atom2->getPosition() + displacementVector;
+
+    dr2 = drVec[0]*drVec[0] + drVec[1]*drVec[1] + drVec[2]*drVec[2];
+    dr6 = dr2*dr2*dr2;
+
+    LJforce = 24.0*(2.0 - dr6)/(dr6*dr6*dr2);
+    force = drVec*LJforce;
+
+    atom1->addForce(force);
+    atom2->addForce(-force);
 }
 
-void Force::calculateForces(Atom *mainAtom, Atom *neighborAtom, const Vector3D &systemSize, const Vector3D &halfSystemSize)
+void Force::calculateForcesUsingMinimumImageConvention(Atom *atom1, Atom *atom2)
 {
-    drVec = mainAtom->getPosition() - neighborAtom->getPosition();
+    calculateForcesUsingMinimumImageConvention(atom1, atom2, m_systemSize, m_halfSystemSize);
+}
+
+void Force::calculateForcesUsingMinimumImageConvention(Atom *atom1, Atom *atom2, const Vector3D &systemSize, const Vector3D &halfSystemSize)
+{
+    drVec = atom1->getPosition() - atom2->getPosition();
 
     // Minimum image convention
-    // TODO: Get rid of this, use displacementvectors instead
     for (uint i = 0; i < 3; i++) {
         if      (drVec[i] >  halfSystemSize[i]) drVec[i] -= systemSize[i];
         else if (drVec[i] < -halfSystemSize[i]) drVec[i] += systemSize[i];
@@ -29,6 +41,6 @@ void Force::calculateForces(Atom *mainAtom, Atom *neighborAtom, const Vector3D &
     LJforce = 24.0*(2.0 - dr6)/(dr6*dr6*dr2);
     force = drVec*LJforce;
 
-    mainAtom->addForce(force);
-    neighborAtom->addForce(-force);
+    atom1->addForce(force);
+    atom2->addForce(-force);
 }
