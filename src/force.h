@@ -8,7 +8,9 @@
 class Force
 {
 public:
-//    Force();
+    Force() = delete;
+    Force(const Vector3D systemSize);
+    void calculateForces(Atom *mainAtom, Atom *neighborAtom);
     void calculateForces(Atom *mainAtom, Atom *neighborAtom, const Vector3D& systemSize, const Vector3D& halfSystemSize);
 
 private:
@@ -17,6 +19,9 @@ private:
     double dr2;
     double dr6;
     double LJforce;
+
+    Vector3D m_systemSize;
+    Vector3D m_halfSystemSize;
 };
 
 #endif // FORCE_H

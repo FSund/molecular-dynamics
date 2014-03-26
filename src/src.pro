@@ -14,7 +14,8 @@ SOURCES += \
     vector3d.cpp \
     integrator.cpp \
     force.cpp \
-    systemgenerator.cpp
+    systemgenerator.cpp \
+    neighborlist.cpp
 
 HEADERS += \
     atom.h \
@@ -23,4 +24,6 @@ HEADERS += \
     box.h \
     integrator.h \
     force.h \
-    systemgenerator.h
+    systemgenerator.h \
+    neighborlist.h \
+    linearindexfunctions.h

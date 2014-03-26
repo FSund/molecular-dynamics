@@ -10,6 +10,7 @@
 #include <atom.h>
 #include <integrator.h>
 #include <systemgenerator.h>
+#include <neighborlist.h>
 
 // forward declarations
 class Integrator;
@@ -17,7 +18,8 @@ class Integrator;
 class System
 {
 public:
-    System();
+    System() = delete;
+    System(const uint nUnitCells, const double unitCellLength, const double forceCutoff);
 //    System(std::vector<Atom *> atoms, Vector3D systemSize);
 
     const std::vector<Atom*> &getMutableAtoms() const;
@@ -29,6 +31,7 @@ public:
 
     void doOneTimeStep(const double dt);
     void writeToXYZ(const std::string& filename);
+    void writeToXYZWithBoxID(const std::string& filename);
     uint nAtoms() const;
 
 private:

@@ -1,12 +1,8 @@
 #include "system.h"
 
-System::System():
-    m_integrator(new Integrator(this)),
+System::System(const uint nUnitCells, const double unitCellLength, const double forceCutoff):
     m_nTimeSteps(0)
 {
-    uint nUnitCells = 3;
-    double unitCellLength = 1.5;
-
     double systemLength = nUnitCells*unitCellLength;
     m_systemSize = Vector3D(systemLength, systemLength, systemLength);
     m_halfSystemSize = m_systemSize/2.0;
@@ -20,6 +16,8 @@ System::System():
         m_constAtoms.push_back(&atom); // casts to const?
     }
     generator.boltzmannDistributeVelocities(temperature, m_atoms);
+
+    m_integrator = new Integrator(this, forceCutoff);
 }
 
 //System::System(std::vector<Atom *> atoms, Vector3D systemSize):
@@ -89,7 +87,45 @@ void System::writeToXYZ(const std::string& filename)
             ofile << atom->getForce()[i] << " ";
         }
         ofile << atom->getVelocity().length() << " ";
+        ofile << atom->getForce().length() << " ";
         ofile << std::endl;
+    }
+}
+
+void System::writeToXYZWithBoxID(const std::string& filename)
+{
+    std::ofstream ofile(filename);
+    if (!ofile.is_open())
+    {
+        std::cout << "Error: Couldn't open file \"" << filename << "\" for writing." << std::endl;
+    }
+    else
+    {
+        // Header
+        ofile << nAtoms() << std::endl;
+        ofile << "Comment" << std::endl;
+
+        // Atoms
+        for (const NeighborList &list : m_integrator->getNeighborLists())
+        {
+            for (const Atom *atom : list.getAtoms())
+            {
+                ofile << atom->getIndex() << " ";
+                for (uint i = 0; i < 3; i++) {
+                    ofile << atom->getPosition()[i] << " ";
+                }
+                for (uint i = 0; i < 3; i++) {
+                    ofile << atom->getVelocity()[i] << " ";
+                }
+                for (uint i = 0; i < 3; i++) {
+                    ofile << atom->getForce()[i] << " ";
+                }
+                ofile << atom->getVelocity().length() << " ";
+                ofile << atom->getForce().length() << " ";
+                ofile << list.getLinearIndex() << " ";
+                ofile << std::endl;
+            }
+        }
     }
 }
 

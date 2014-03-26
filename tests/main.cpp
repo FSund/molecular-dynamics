@@ -43,24 +43,24 @@ SUITE(Forces)
     struct ForceData
     {
         ForceData() :
-            force(new Force),
-            atom1(new Atom(Vector3D(0.0, 0.0, 0.0))),
-            atom2(new Atom(Vector3D(2.0, 3.0, 4.0))),
             systemSize(Vector3D(10.0, 10.0, 10.0)),
-            halfSystemSize(systemSize/2.0)
+            halfSystemSize(systemSize/2.0),
+            force(new Force(systemSize)),
+            atom1(new Atom(Vector3D(0.0, 0.0, 0.0))),
+            atom2(new Atom(Vector3D(2.0, 3.0, 4.0)))
         {
             drVec = atom1->getPosition() - atom2->getPosition();
             distance = drVec.length();
             force->calculateForces(atom1, atom2, systemSize, halfSystemSize);
         }
 
+        Vector3D systemSize;
+        Vector3D halfSystemSize;
         Force *force;
         Atom *atom1;
         Atom *atom2;
         double distance;
         Vector3D drVec;
-        Vector3D systemSize;
-        Vector3D halfSystemSize;
     };
 
     TEST_FIXTURE(ForceData, ForceCalculationComponentwise)
