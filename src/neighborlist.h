@@ -25,9 +25,10 @@ public:
     NeighborList(const Vector3D& origin, const std::vector<Atom *> &atoms, const std::vector<int>& index, const int linearIndex);
 
     void findNeighbors(std::vector<NeighborList>& lists, const std::vector<int> &nLists, const Vector3D& systemSize);
-    void calculateForces(Force* force);
     void purgeAtoms(std::list<Atom *> &atomsOutsideBox);
     void findMyAtomsInList(std::list<Atom *> &atoms);
+
+    void calculateForces(Force* force);
 
     const std::list<Atom *>& getAtoms() const;
     int getLinearIndex() const;
@@ -41,9 +42,11 @@ private:
     int m_linearIndex;
 
     static Vector3D m_boxSize;
+    static const Vector3D zeroVec;
 
     void calcuateForcesFromBox(Atom *atom1, Force *force, const Vector3D& displacementVector);
     void calcuateForcesFromSelf(Atom *atom, Force *force);
+    void calcuateForcesFromSelfIterator(const std::list<Atom *>::iterator& atom1, Force *force);
 };
 
 #endif // NEIGHBORLIST_H

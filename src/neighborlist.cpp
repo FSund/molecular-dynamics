@@ -1,6 +1,7 @@
 #include <neighborlist.h>
 
 Vector3D NeighborList::m_boxSize;
+const Vector3D NeighborList::zeroVec = Vector3D(0.0, 0.0, 0.0);
 
 NeighborList::NeighborList(
         const Vector3D &origin,
@@ -117,24 +118,32 @@ void NeighborList::findMyAtomsInList(std::list<Atom*> &atoms)
 
 void NeighborList::calculateForces(Force *force)
 {
-    for (Atom *atom : m_atoms)
+    for (auto atom = m_atoms.begin(); atom != m_atoms.end(); ++atom) // Use iterators so we can calculate force from self efficiently (start from iterator atom+1)
     {
-//        for (NeighborList *list : m_neighbors)
         for (uint i = 0; i < m_neighbors.size(); i++)
         {
             if (m_neighbors[i] == this)
             {
-                m_neighbors[i]->calcuateForcesFromSelf(atom, force);
+                m_neighbors[i]->calcuateForcesFromSelfIterator(atom, force);
             }
             else
             {
-                m_neighbors[i]->calcuateForcesFromBox(atom, force, m_displacementVectors[i]);
+                m_neighbors[i]->calcuateForcesFromBox(*atom, force, m_displacementVectors[i]);
             }
         }
     }
 }
 
-void NeighborList::calcuateForcesFromSelf(Atom* atom1, Force* force)
+inline void NeighborList::calcuateForcesFromSelfIterator(const std::list<Atom *>::iterator &atom1, Force* force)
+{
+    auto tmp = atom1; // Make copy since we can't increment atom1
+    for (auto atom2 = ++tmp; atom2 != m_atoms.end(); ++atom2)
+    {
+        force->calculateForces(*atom1, *atom2, zeroVec);
+    }
+}
+
+inline void NeighborList::calcuateForcesFromSelf(Atom* atom1, Force* force)
 {
     for (Atom *atom2 : m_atoms)
     {
@@ -149,7 +158,7 @@ void NeighborList::calcuateForcesFromSelf(Atom* atom1, Force* force)
     }
 }
 
-void NeighborList::calcuateForcesFromBox(Atom* atom1, Force* force, const Vector3D &displacementVector)
+inline void NeighborList::calcuateForcesFromBox(Atom* atom1, Force* force, const Vector3D &displacementVector)
 {
     for (Atom *atom2 : m_atoms)
     {
