@@ -10,20 +10,14 @@ void Force::calculateForceWithoutDisplacementVector(Atom *atom1, Atom *atom2)
 {
     drVec = atom1->getPosition() - atom2->getPosition();
 
-    force = this->calculateForce(drVec);
-
-    atom1->addForce(force);
-    atom2->addForce(-force);
+    calculateAndApplyForce(atom1, atom2, drVec);
 }
 
 void Force::calculateForceWithDisplacementVector(Atom *atom1, Atom *atom2, const Vector3D &displacementVector)
 {
     drVec = atom1->getPosition() - atom2->getPosition() + displacementVector;
 
-    force = this->calculateForce(drVec);
-
-    atom1->addForce(force);
-    atom2->addForce(-force);
+    calculateAndApplyForce(atom1, atom2, drVec);
 }
 
 void Force::calculateForceUsingMinimumImageConvention(Atom *atom1, Atom *atom2, const Vector3D &systemSize, const Vector3D &halfSystemSize)
@@ -36,8 +30,5 @@ void Force::calculateForceUsingMinimumImageConvention(Atom *atom1, Atom *atom2, 
         else if (drVec[i] < -halfSystemSize[i]) drVec[i] += systemSize[i];
     }
 
-    force = this->calculateForce(drVec);
-
-    atom1->addForce(force);
-    atom2->addForce(-force);
+    calculateAndApplyForce(atom1, atom2, drVec);
 }

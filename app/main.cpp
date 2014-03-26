@@ -17,13 +17,13 @@ int main()
     System sys(nUnitCells, unitCellLength, cutoff);
 
     double dt = 0.01;
-    ostringstream filename;
-    for (uint i = 0; i < 10; i++)
+//    ostringstream filename;
+    for (uint i = 0; i < 50; i++)
     {
-        filename << "/home/fsund/Data/molecular-dynamics/statefiles/state" << std::setw(3) << std::setfill('0') << i << ".xyz";
+//        filename << "/home/fsund/Data/molecular-dynamics/statefiles/state" << std::setw(3) << std::setfill('0') << i << ".xyz";
 //        sys.writeToXYZ(filename.str());
 //        sys.writeToXYZWithBoxID(filename.str());
-        filename.str(""); // clear stringstream
+//        filename.str(""); // clear stringstream
 
         sys.doOneTimeStep(dt);
         std::cout << "timestep = " << i << endl;
