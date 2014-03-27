@@ -30,7 +30,7 @@ public:
             const Vector3D& halfSystemSize);
 
 private:
-    inline Vector3D &calculateForce(const Vector3D& drVec);
+    inline Vector3D& calculateForce(const Vector3D& drVec);
     inline void calculateAndApplyForce(Atom *atom1, Atom *atom2, const Vector3D& drVec);
 
     Vector3D force;
@@ -56,7 +56,7 @@ inline void Force::calculateAndApplyForce(Atom *atom1, Atom *atom2, const Vector
     atom2->addForce(-force);
 }
 
-inline Vector3D &Force::calculateForce(const Vector3D& drVec)
+inline Vector3D& Force::calculateForce(const Vector3D& drVec)
 {
     dr2 = drVec[0]*drVec[0] + drVec[1]*drVec[1] + drVec[2]*drVec[2];
     dr6 = dr2*dr2*dr2;

@@ -74,7 +74,7 @@ void System::writeToXYZWithBoxID(const std::string& filename)
         ofile << "Comment" << std::endl;
 
         // Atoms
-        for (const NeighborList &list : m_integrator->getNeighborLists())
+        for (const NeighborList& list : m_integrator->getNeighborLists())
         {
             for (const Atom *atom : list.getAtoms())
             {

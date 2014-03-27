@@ -3,9 +3,9 @@
 Vector3D NeighborList::m_boxSize;
 
 NeighborList::NeighborList(
-        const Vector3D &origin,
-        const std::vector<Atom*> &atoms,
-        const std::vector<int> &index,
+        const Vector3D& origin,
+        const std::vector<Atom*>& atoms,
+        const std::vector<int>& index,
         const int linearIndex):
 //    system(system),
     m_atoms(std::list<Atom*>(atoms.begin(), atoms.end())), // "Converting" std::vector to std::list
@@ -16,9 +16,9 @@ NeighborList::NeighborList(
 }
 
 void NeighborList::findNeighbors(
-        std::vector<NeighborList> &lists, // This can't be const because m_neighbors.push_back(&lists[linearIndex]) doesn't like it
-        const std::vector<int> &nLists,
-        const Vector3D &systemSize)
+        std::vector<NeighborList>& lists, // This can't be const because m_neighbors.push_back(&lists[linearIndex]) doesn't like it
+        const std::vector<int>& nLists,
+        const Vector3D& systemSize)
 {
     for (int di = -1; di <= 1; di++)
     {

@@ -49,7 +49,7 @@ Integrator::Integrator(System *system, const double forceCutoff):
         }
     }
 
-    for (NeighborList &list : m_neighborLists)
+    for (NeighborList& list : m_neighborLists)
     {
         list.findNeighbors(m_neighborLists, nLists, m_system->getSystemSize());
     }
@@ -72,13 +72,13 @@ void Integrator::integrate(const double dt)
     {
         // Remove atoms that went outside box from lists
         std::list<Atom *> atomsOutsideBox;
-        for (NeighborList &list : m_neighborLists)
+        for (NeighborList& list : m_neighborLists)
         {
             list.purgeAtoms(atomsOutsideBox);
         }
 
         // Put atoms that went outside box in correct box
-        for (NeighborList &list : m_neighborLists)
+        for (NeighborList& list : m_neighborLists)
         {
             list.findMyAtomsInList(atomsOutsideBox);
         }
@@ -120,7 +120,7 @@ void Integrator::calculateForcesUsingBoxes()
     {
         atom->setForce(Vector3D(0.0, 0.0, 0.0));
     }
-    for (NeighborList &list : m_neighborLists)
+    for (NeighborList& list : m_neighborLists)
     {
         list.calculateForces(m_force);
     }

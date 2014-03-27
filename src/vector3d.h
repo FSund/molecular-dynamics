@@ -30,7 +30,7 @@ public:
     double operator()(const int component) const;
     double operator[](const int component) const;
 
-    friend std::ostream& operator<< (std::ostream &out, const Vector3D &vector);
+    friend std::ostream& operator<< (std::ostream& out, const Vector3D& vector);
 
     void setX(double x);
     void setY(double y);
@@ -42,11 +42,11 @@ public:
 //    Vector3D normalized() const;
 //    void normalize();
 
-    Vector3D &operator+=(const Vector3D &vector);
-    Vector3D &operator-=(const Vector3D &vector);
-    Vector3D &operator*=(double factor);
-    Vector3D &operator*=(const Vector3D &vector);
-    Vector3D &operator/=(double divisor);
+    Vector3D& operator+=(const Vector3D& vector);
+    Vector3D& operator-=(const Vector3D& vector);
+    Vector3D& operator*=(double factor);
+    Vector3D& operator*=(const Vector3D& vector);
+    Vector3D& operator/=(double divisor);
 
 //    static double dotProduct(const Vector3D& v1, const Vector3D& v2);
 //    static Vector3D crossProduct(const Vector3D& v1, const Vector3D& v2);
@@ -58,15 +58,15 @@ public:
 //    double distanceToPlane(const Vector3D& plane1, const Vector3D& plane2, const Vector3D& plane3) const;
 //    double distanceToLine(const Vector3D& point, const Vector3D& direction) const;
 
-    friend bool operator==(const Vector3D &v1, const Vector3D &v2);
-    friend bool operator!=(const Vector3D &v1, const Vector3D &v2);
-    friend const Vector3D operator+(const Vector3D &v1, const Vector3D &v2);
-    friend const Vector3D operator-(const Vector3D &v1, const Vector3D &v2);
-    friend const Vector3D operator*(double factor, const Vector3D &vector);
-    friend const Vector3D operator*(const Vector3D &vector, double factor);
-    friend const Vector3D operator*(const Vector3D &v1, const Vector3D& v2);
-    friend const Vector3D operator-(const Vector3D &vector);
-    friend const Vector3D operator/(const Vector3D &vector, double divisor);
+    friend bool operator==(const Vector3D& v1, const Vector3D& v2);
+    friend bool operator!=(const Vector3D& v1, const Vector3D& v2);
+    friend const Vector3D operator+(const Vector3D& v1, const Vector3D& v2);
+    friend const Vector3D operator-(const Vector3D& v1, const Vector3D& v2);
+    friend const Vector3D operator*(double factor, const Vector3D& vector);
+    friend const Vector3D operator*(const Vector3D& vector, double factor);
+    friend const Vector3D operator*(const Vector3D& v1, const Vector3D& v2);
+    friend const Vector3D operator-(const Vector3D& vector);
+    friend const Vector3D operator/(const Vector3D& vector, double divisor);
 
 //    friend inline bool qFuzzyCompare(const Vector3D& v1, const Vector3D& v2);
 
@@ -131,7 +131,7 @@ inline double Vector3D::lengthSquared() const
 
 }
 
-inline Vector3D& Vector3D::operator+=(const Vector3D &vector)
+inline Vector3D& Vector3D::operator+=(const Vector3D& vector)
 {
     mem_local[0] += vector.mem_local[0];
     mem_local[1] += vector.mem_local[1];
@@ -140,7 +140,7 @@ inline Vector3D& Vector3D::operator+=(const Vector3D &vector)
     return *this;
 }
 
-inline Vector3D& Vector3D::operator-=(const Vector3D &vector)
+inline Vector3D& Vector3D::operator-=(const Vector3D& vector)
 {
     mem_local[0] -= vector.mem_local[0];
     mem_local[1] -= vector.mem_local[1];
@@ -176,21 +176,21 @@ inline Vector3D& Vector3D::operator/=(double divisor)
     return *this;
 }
 
-inline bool operator==(const Vector3D &v1, const Vector3D &v2)
+inline bool operator==(const Vector3D& v1, const Vector3D& v2)
 {
     return     v1.mem_local[0] == v2.mem_local[0]
             && v1.mem_local[1] == v2.mem_local[1]
             && v1.mem_local[2] == v2.mem_local[2];
 }
 
-inline bool operator!=(const Vector3D &v1, const Vector3D &v2)
+inline bool operator!=(const Vector3D& v1, const Vector3D& v2)
 {
     return     v1.mem_local[0] != v2.mem_local[0]
             || v1.mem_local[1] != v2.mem_local[1]
             || v1.mem_local[2] != v2.mem_local[2];
 }
 
-inline const Vector3D operator+(const Vector3D &v1, const Vector3D &v2)
+inline const Vector3D operator+(const Vector3D& v1, const Vector3D& v2)
 {
     return
         Vector3D(
@@ -200,7 +200,7 @@ inline const Vector3D operator+(const Vector3D &v1, const Vector3D &v2)
         );
 }
 
-inline const Vector3D operator-(const Vector3D &v1, const Vector3D &v2)
+inline const Vector3D operator-(const Vector3D& v1, const Vector3D& v2)
 {
     return
         Vector3D(
@@ -210,7 +210,7 @@ inline const Vector3D operator-(const Vector3D &v1, const Vector3D &v2)
         );
 }
 
-inline const Vector3D operator*(double factor, const Vector3D &vector)
+inline const Vector3D operator*(double factor, const Vector3D& vector)
 {
     return
         Vector3D(
@@ -220,12 +220,12 @@ inline const Vector3D operator*(double factor, const Vector3D &vector)
         );
 }
 
-inline const Vector3D operator*(const Vector3D &vector, double factor)
+inline const Vector3D operator*(const Vector3D& vector, double factor)
 {
     return operator*(factor, vector);
 }
 
-inline const Vector3D operator*(const Vector3D &v1, const Vector3D& v2)
+inline const Vector3D operator*(const Vector3D& v1, const Vector3D& v2)
 {
     return
         Vector3D(
@@ -235,7 +235,7 @@ inline const Vector3D operator*(const Vector3D &v1, const Vector3D& v2)
         );
 }
 
-inline const Vector3D operator-(const Vector3D &vector)
+inline const Vector3D operator-(const Vector3D& vector)
 {
     return
         Vector3D(
@@ -245,7 +245,7 @@ inline const Vector3D operator-(const Vector3D &vector)
         );
 }
 
-inline const Vector3D operator/(const Vector3D &vector, double divisor)
+inline const Vector3D operator/(const Vector3D& vector, double divisor)
 {
     return
         Vector3D(
