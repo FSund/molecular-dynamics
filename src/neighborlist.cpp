@@ -4,11 +4,11 @@ Vector3D NeighborList::m_boxSize;
 
 NeighborList::NeighborList(
         const Vector3D &origin,
-        const std::vector<Atom *> &atoms,
+        const std::vector<Atom*> &atoms,
         const std::vector<int> &index,
         const int linearIndex):
 //    system(system),
-    m_atoms(std::list<Atom *>(atoms.begin(), atoms.end())), // "Converting" std::vector to std::list
+    m_atoms(std::list<Atom*>(atoms.begin(), atoms.end())), // "Converting" std::vector to std::list
     m_origin(origin),
     m_index(index),
     m_linearIndex(linearIndex)
@@ -94,7 +94,7 @@ void NeighborList::purgeAtoms(std::list<Atom*>& atomsOutsideBox)
     }
 }
 
-void NeighborList::findMyAtomsInList(std::list<Atom*> &atoms)
+void NeighborList::findMyAtomsInList(std::list<Atom*>& atoms)
 {
     auto atom = atoms.begin();
     while (atom != atoms.end())

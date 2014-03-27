@@ -20,7 +20,7 @@ Integrator::Integrator(System *system, const double forceCutoff):
     NeighborList::m_boxSize = boxSize;
 
     // Sorting atoms into neighborlists
-    std::vector<std::vector<Atom *> > neighborListAtoms(nLists[0]*nLists[1]*nLists[2]);
+    std::vector<std::vector<Atom*> > neighborListAtoms(nLists[0]*nLists[1]*nLists[2]);
     for (Atom *atom : m_system->getMutableAtoms())
     {
         std::vector<int> index = {

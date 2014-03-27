@@ -20,7 +20,7 @@ System::System(const uint nUnitCells, const double unitCellLength, const double 
     m_integrator = new Integrator(this, forceCutoff);
 }
 
-//System::System(std::vector<Atom *> atoms, Vector3D systemSize):
+//System::System(std::vector<Atom*> atoms, Vector3D systemSize):
 //    m_atoms(atoms),
 //    m_integrator(new Integrator(this)),
 //    m_systemSize(systemSize),
@@ -43,7 +43,7 @@ void System::writeToXYZ(const std::string& filename)
     ofile << "Comment" << std::endl;
 
     // Atoms
-    for (Atom* atom : m_atoms) {
+    for (Atom *atom : m_atoms) {
         ofile << atom->getIndex() << " ";
         for (uint i = 0; i < 3; i++) {
             ofile << atom->getPosition()[i] << " ";

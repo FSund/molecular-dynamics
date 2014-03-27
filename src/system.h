@@ -20,7 +20,7 @@ class System
 public:
     System() = delete;
     System(const uint nUnitCells, const double unitCellLength, const double forceCutoff);
-//    System(std::vector<Atom *> atoms, Vector3D systemSize);
+//    System(std::vector<Atom*> atoms, Vector3D systemSize);
 
     inline const std::vector<Atom*> &getMutableAtoms() const;
     inline const std::vector<const Atom*> &getAtoms() const;
@@ -35,8 +35,8 @@ public:
     inline uint nAtoms() const;
 
 private:
-    std::vector<Atom *> m_atoms;
-    std::vector<const Atom *> m_constAtoms;
+    std::vector<Atom*> m_atoms;
+    std::vector<const Atom*> m_constAtoms;
     std::vector<Atom> m_atom_objects;
     Integrator *m_integrator;
 
@@ -46,12 +46,12 @@ private:
     Vector3D m_halfSystemSize;
 };
 
-inline const std::vector<Atom *> &System::getMutableAtoms() const
+inline const std::vector<Atom*> &System::getMutableAtoms() const
 {
     return m_atoms;
 }
 
-inline const std::vector<const Atom *> &System::getAtoms() const
+inline const std::vector<const Atom*> &System::getAtoms() const
 {
     return m_constAtoms;
 }
